@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-import concurrent.futures
+import asyncio
 import queue
+
+import fsspec
 
 import uproot
 import uproot.source.chunk
@@ -38,9 +40,7 @@ class FSSpecSource(uproot.source.chunk.Source):
         self._fs, self._file_path = fsspec.core.url_to_fs(file_path, **opts)
 
         if self._use_threads:
-            self._executor = concurrent.futures.ThreadPoolExecutor(
-                max_workers=self._num_workers
-            )
+            self._executor = uproot.source.futures.LoopExecutor()
         else:
             self._executor = uproot.source.futures.TrivialExecutor()
 
@@ -131,14 +131,23 @@ class FSSpecSource(uproot.source.chunk.Source):
         self._num_requested_chunks += len(ranges)
         self._num_requested_bytes += sum(stop - start for start, stop in ranges)
 
+        # not all filesystems support async
+        if not self._fs.async_impl:
+            raise RuntimeError("FSSpecSource requires an async filesystem")
+
+        fs_async = fsspec.filesystem(self._fs.protocol, asynchronous=True)
+
+        async def fetch_bytes(start, stop) -> asyncio.Future:
+            return await asyncio.gather(fs_async.cat_file(self._file_path, start, stop))
+
         chunks = []
+        # this is not compatible with the current trivial future
         for start, stop in ranges:
-            future = self._executor.submit(
-                self._fs.cat_file, self._file_path, start, stop
-            )
+            future = self._executor.submit(fetch_bytes(start, stop))
             chunk = uproot.source.chunk.Chunk(self, start, stop, future)
             future.add_done_callback(uproot.source.chunk.notifier(chunk, notifications))
             chunks.append(chunk)
+
         return chunks
 
     @property
