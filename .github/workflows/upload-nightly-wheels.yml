@@ -3,7 +3,7 @@ name: Upload nightly wheels to Anaconda Cloud
 on:
   # Run daily at 1:23 UTC
   schedule:
-    - cron: '23 1 * * *'
+    - cron: 23 1 * * *
   # Run on demand with workflow dispatch
   workflow_dispatch:
 
