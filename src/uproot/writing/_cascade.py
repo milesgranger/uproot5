@@ -1779,6 +1779,22 @@ class Directory(CascadeNode):
         tree.write_anew(sink)
         return tree
 
+    def copy_tree(
+        self,
+        sink,
+        existing,
+        # new_branch
+    ):
+        import uproot.writing._copytree
+
+        tree = uproot.writing._copytree.Tree(
+            self,
+            existing,
+            # new_branch
+        )
+        tree.write_copy(sink)
+        return tree
+
     def add_rntuple(self, sink, name, title, akform):
         import uproot.writing._cascadentuple
 
