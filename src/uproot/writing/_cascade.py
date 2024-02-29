@@ -1783,14 +1783,18 @@ class Directory(CascadeNode):
         self,
         sink,
         existing,
+        name,
+        file,
         # new_branch
     ):
         import uproot.writing._copytree
 
         tree = uproot.writing._copytree.Tree(
             self,
+            self._freesegments,
             existing,
-            # new_branch
+            name,
+            file
         )
         tree.write_copy(sink)
         return tree
