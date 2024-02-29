@@ -1434,17 +1434,16 @@ in file {} in directory {}""".format(
         )
         directory._file._new_ntuple(ntuple)
         return ntuple
-    
 
     def backfill_copy(  # my own variation of mktree
         self,
         source,
-        name
+        name,
         # new_branch,
     ):
         """
         Args:
-            source (TTree): existing TTree to copy/replace 
+            source (TTree): existing TTree to copy/replace
         Creates an empty TTree in this directory.
 
         Note that TTrees can be created by assigning TTree-like data to a directory
@@ -1469,7 +1468,7 @@ in file {} in directory {}""".format(
 
         # names.append(new_branch.name)  # May need the TKey? (uproot.reading.ReadOnlyKey)
 
-        try: # Will this throw an error? proabably?
+        try:  # Will this throw an error? proabably?
             at = source.name.rindex("/")
         except ValueError:
             treename = source.name
@@ -1499,7 +1498,6 @@ in file {} in directory {}""".format(
         # directory._file._new_tree(tree)
 
         # return tree
-
 
     def copy_from(
         self,

@@ -86,7 +86,7 @@ class Tree:
     ):
         # 1: are any of these actually attributes of whatever type source will end up being
         # 2: so would source already be decompressed? Does any of this work? readonlyttree?
-        # Use "readonlykey" to get 
+        # Use "readonlykey" to get
         self.source = source
         self._directory = directory # good
         self._name = name
@@ -119,7 +119,7 @@ class Tree:
             "fAutoSave": source.members["fAutoSave"],
             "fAutoFlush": source.members["fAutoFlush"],
             "fEstimate": source.members["fEstimate"],
-            
+
         }
 
         self._key = None
@@ -138,7 +138,7 @@ class Tree:
         for branch in source.branches:
             self._branch_data.append({key: data for key, data in branch.all_members.items()})
             self._branch_data[-1].update(
-                {       
+                {
                     "arrays_write_start": 0,
                     "arrays_write_stop": 0,
                     "metadata_start": None,
@@ -317,23 +317,23 @@ class Tree:
                 special_struct = uproot.models.TLeaf._tleafs1_format1
             elif encoded_classname == "Model_TLeafI_v1":
                 letter_upper = "I"
-                special_struct = uproot.models.TLeaf._tleafi1_format1    
+                special_struct = uproot.models.TLeaf._tleafi1_format1
             elif encoded_classname == "Model_TLeafL_v1":
                 letter_upper = "L"
-                special_struct = uproot.models.TLeaf._tleafl1_format0        
+                special_struct = uproot.models.TLeaf._tleafl1_format0
             elif encoded_classname == "Model_TLeafF_v1":
                 letter_upper = "F"
-                special_struct = uproot.models.TLeaf._tleaff1_format1    
+                special_struct = uproot.models.TLeaf._tleaff1_format1
             elif encoded_classname == "Model_TLeafD_v1":
                 letter_upper = "D"
-                special_struct = uproot.models.TLeaf._tleafd1_format1  
+                special_struct = uproot.models.TLeaf._tleafd1_format1
             elif encoded_classname == "Model_TLeafC_v1":
                 letter_upper = "C"
-                special_struct = uproot.models.TLeaf._tleafc1_format1   
+                special_struct = uproot.models.TLeaf._tleafc1_format1
             else:
                 letter_upper = "O"
                 special_struct = uproot.models.TLeaf._tleafO1_format1
-                
+
             out.append(("TLeaf" + letter_upper).encode() + b"\x00")
 
             # if self._branch_data[branch_indx]["shape"] == ():
@@ -447,7 +447,7 @@ class Tree:
                         datum["counter"]["tleaf_reference_number"]
                     )
                 )
-            
+
             # # specialized TLeaf* members (fMinimum, fMaximum)
             out.append(special_struct.pack(0, 0))
             datum["tleaf_special_struct"] = special_struct
@@ -532,7 +532,7 @@ class Tree:
             sum(len(x) for x in out[ttree_header_index + 1 :]), 20  # TTre[e
         )
         self._metadata_start = sum(len(x) for x in out[:metadata_out_index])
-        
+
         raw_data = b"".join(out)
         self._key = self._directory.add_object(
             sink,

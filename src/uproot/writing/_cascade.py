@@ -1790,11 +1790,7 @@ class Directory(CascadeNode):
         import uproot.writing._copytree
 
         tree = uproot.writing._copytree.Tree(
-            self,
-            self._freesegments,
-            existing,
-            name,
-            file
+            self, self._freesegments, existing, name, file
         )
         tree.write_copy(sink)
         return tree
